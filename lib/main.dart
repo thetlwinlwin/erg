@@ -7,11 +7,21 @@ import 'package:erg/navigation/router.dart';
 import 'package:flutter/material.dart';
 import 'package:logging/logging.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './utils/theme.dart';
+import 'repository/data_contract.dart';
+import 'repository/persistence_model.dart';
 
+late LocalPersist<String> persistence;
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final _pref = await SharedPreferences.getInstance();
+  persistence = LocalPersist<String>(
+    pref: _pref,
+    keyList: PersistenceKeys.listOfKeys,
+  );
+  persistence.ready();
   _setupLogging();
   runApp(const MyApp());
 }
@@ -32,6 +42,7 @@ class MyApp extends StatelessWidget {
     return MultiProvider(
       providers: [
         ChangeNotifierProvider.value(value: appStateManager),
+        Provider.value(value: persistence),
         Provider.value(value: customerManager),
         Provider(
           create: (_) => ErgAuthService.create(),
