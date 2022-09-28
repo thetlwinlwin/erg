@@ -6,16 +6,36 @@ part 'auth_model.g.dart';
 class AccessTokenBearer {
   @JsonKey(name: 'access_token')
   final String accessTokenString;
+  @JsonKey(name: 'refresh_token')
+  final String refreshTokenString;
   @JsonKey(name: 'token_type')
   final String tokenType;
   AccessTokenBearer({
     required this.accessTokenString,
-    this.tokenType = 'bearer',
+    required this.refreshTokenString,
+    this.tokenType = 'Bearer',
   });
 
   factory AccessTokenBearer.fromJson(Map<String, dynamic> json) =>
       _$AccessTokenBearerFromJson(json);
   Map<String, dynamic> toJson() => _$AccessTokenBearerToJson(this);
+
+  @override
+  String toString() {
+    return '$tokenType $accessTokenString';
+  }
+}
+
+@JsonSerializable(includeIfNull: false)
+class RefreshToken {
+  @JsonKey(name: 'accepted_token')
+  final String acceptedTokenString;
+  RefreshToken({
+    required this.acceptedTokenString,
+  });
+  factory RefreshToken.fromJson(Map<String, dynamic> json) =>
+      _$RefreshTokenFromJson(json);
+  Map<String, dynamic> toJson() => _$RefreshTokenToJson(this);
 }
 
 @JsonSerializable(includeIfNull: false)

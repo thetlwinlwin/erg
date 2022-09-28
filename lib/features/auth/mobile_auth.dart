@@ -5,6 +5,7 @@ import 'package:erg/utils/constants.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import '../../managers/listener_manager.dart';
 import '../shared/models/auth/auth_model.dart';
 import '../shared/models/error_model/error_model.dart';
 import '../shared/widget/custom_text_field.dart';
@@ -20,14 +21,18 @@ class MobileAuth extends StatefulWidget {
 class _MobileAuthState extends State<MobileAuth>
     with SingleTickerProviderStateMixin {
   late AnimationController _controller;
-  final TextEditingController _usernameController =
-      TextEditingController(text: appStateManager.user);
+  String? _user;
+  late TextEditingController _usernameController;
+  late ListenerManager _manager;
   final TextEditingController _passwordController = TextEditingController();
   bool isPasswordVisible = true;
 
   @override
   void initState() {
     super.initState();
+    _manager = Provider.of<ListenerManager>(context, listen: false);
+    _user = _manager.listenerName;
+    _usernameController = TextEditingController(text: _user ?? '');
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 2000),
@@ -90,17 +95,21 @@ class _MobileAuthState extends State<MobileAuth>
 
   void submitHandler(String? value) async {
     Response<AccessTokenBearer> returnResult =
-        await Provider.of<ErgAuthService>(context, listen: false)
-            .managerLoggingIn(
-                _usernameController.text, _passwordController.text);
+        await ErgAuthService.create().managerLoggingIn(
+      _usernameController.text,
+      _passwordController.text,
+    );
     if (returnResult.error is CustomError) {
       errorSnackBar(returnResult.error.toString(), context);
     }
     if (returnResult.isSuccessful) {
-      Provider.of<AppStateManager>(context, listen: false).login(
-        tokenPayload: returnResult.body!,
-        username: _usernameController.text,
+      final doneSaving = await _manager.setUserData(
+        name: _usernameController.text,
+        token: returnResult.body!,
       );
+      if (doneSaving) {
+        Provider.of<AppStateManager>(context, listen: false).login();
+      }
     }
   }
 

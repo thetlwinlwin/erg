@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_datetime_picker/flutter_datetime_picker.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class ErgTheme {
@@ -59,6 +60,11 @@ class ErgTheme {
 
   static ThemeData light() {
     return ThemeData(
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateColor.resolveWith(
+          (states) => lightColor,
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(
@@ -97,8 +103,46 @@ class ErgTheme {
     );
   }
 
+  static const DatePickerTheme darkDatePickerTheme = DatePickerTheme(
+    backgroundColor: Colors.black,
+    doneStyle: TextStyle(
+      color: darkColor,
+      fontWeight: FontWeight.bold,
+    ),
+    cancelStyle: TextStyle(
+      color: darkColor,
+      fontWeight: FontWeight.bold,
+    ),
+    itemStyle: TextStyle(
+      fontWeight: FontWeight.w700,
+      fontSize: 20,
+      color: Colors.white,
+    ),
+  );
+  static const DatePickerTheme lightDatePickerTheme = DatePickerTheme(
+    backgroundColor: Colors.white,
+    doneStyle: TextStyle(
+      color: lightColor,
+      fontWeight: FontWeight.bold,
+    ),
+    cancelStyle: TextStyle(
+      color: lightColor,
+      fontWeight: FontWeight.bold,
+    ),
+    itemStyle: TextStyle(
+      fontWeight: FontWeight.w700,
+      fontSize: 20,
+      color: Colors.black,
+    ),
+  );
+
   static ThemeData dark() {
     return ThemeData(
+      checkboxTheme: CheckboxThemeData(
+        fillColor: MaterialStateColor.resolveWith(
+          (states) => darkColor,
+        ),
+      ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ButtonStyle(
           shape: MaterialStateProperty.all<RoundedRectangleBorder>(

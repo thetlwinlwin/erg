@@ -9,31 +9,35 @@ part of 'ds_model.dart';
 DSDataCreateModel _$DSDataCreateModelFromJson(Map<String, dynamic> json) =>
     DSDataCreateModel(
       customerId: json['customer_id'] as int,
-      detail: DSDetailModel.fromJson(json['detail'] as Map<String, dynamic>),
+      detail: DSDetailModel.fromJson(
+          json['ds_order_detail'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$DSDataCreateModelToJson(DSDataCreateModel instance) =>
     <String, dynamic>{
       'customer_id': instance.customerId,
-      'detail': instance.detail,
+      'ds_order_detail': instance.detail,
     };
 
 DSDetailModel _$DSDetailModelFromJson(Map<String, dynamic> json) =>
     DSDetailModel(
-      length: (json['length'] as num).toDouble(),
-      thickness: (json['thickness'] as num).toDouble(),
+      depth: (json['depth'] as num).toDouble(),
       grade: (json['zinc_grade'] as num).toDouble(),
+      lengthPerSheet: (json['length_per_sheet'] as num).toDouble(),
+      thickness: (json['thickness'] as num).toDouble(),
       pickupDate: DateTime.parse(json['pick_up_time'] as String),
       totalSheets: json['no_of_sheets'] as int,
-      depth: (json['depth'] as num).toDouble(),
-    )..isProductionDone = json['is_production_done'] as bool?;
+      productionStage: json['production_stage'] as String,
+      notes: json['notes'] as String?,
+    );
 
 Map<String, dynamic> _$DSDetailModelToJson(DSDetailModel instance) {
   final val = <String, dynamic>{
-    'length': instance.length,
+    'no_of_sheets': instance.totalSheets,
+    'length_per_sheet': instance.lengthPerSheet,
     'thickness': instance.thickness,
-    'zinc_grade': instance.grade,
     'pick_up_time': instance.pickupDate.toIso8601String(),
+    'production_stage': instance.productionStage,
   };
 
   void writeNotNull(String key, dynamic value) {
@@ -42,23 +46,24 @@ Map<String, dynamic> _$DSDetailModelToJson(DSDetailModel instance) {
     }
   }
 
-  writeNotNull('is_production_done', instance.isProductionDone);
-  val['no_of_sheets'] = instance.totalSheets;
+  writeNotNull('notes', instance.notes);
   val['depth'] = instance.depth;
+  val['zinc_grade'] = instance.grade;
   return val;
 }
 
 DSOrderFetchModel _$DSOrderFetchModelFromJson(Map<String, dynamic> json) =>
     DSOrderFetchModel(
-      manager: ManagerBase.fromJson(json['manager'] as Map<String, dynamic>),
-      customer: CustomerBase.fromJson(json['customer'] as Map<String, dynamic>),
-      detail:
-          DSDetailModel.fromJson(json['order_detail'] as Map<String, dynamic>),
+      manager: ManagerBase.fromJson(json['ds_manager'] as Map<String, dynamic>),
+      customer:
+          CustomerCreate.fromJson(json['ds_customer'] as Map<String, dynamic>),
+      detail: DSDetailModel.fromJson(
+          json['ds_order_detail'] as Map<String, dynamic>),
     );
 
 Map<String, dynamic> _$DSOrderFetchModelToJson(DSOrderFetchModel instance) =>
     <String, dynamic>{
-      'manager': instance.manager,
-      'customer': instance.customer,
-      'order_detail': instance.detail,
+      'ds_manager': instance.manager,
+      'ds_customer': instance.customer,
+      'ds_order_detail': instance.detail,
     };

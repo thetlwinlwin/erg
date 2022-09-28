@@ -8,19 +8,21 @@ part of 'base_model.dart';
 
 BaseDetailModel _$BaseDetailModelFromJson(Map<String, dynamic> json) =>
     BaseDetailModel(
-      length: (json['length'] as num).toDouble(),
+      totalSheets: json['no_of_sheets'] as int,
+      lengthPerSheet: (json['length_per_sheet'] as num).toDouble(),
       thickness: (json['thickness'] as num).toDouble(),
-      grade: (json['zinc_grade'] as num).toDouble(),
       pickupDate: DateTime.parse(json['pick_up_time'] as String),
-      isProductionDone: json['is_production_done'] as bool?,
+      productionStage: json['production_stage'] as String,
+      notes: json['notes'] as String?,
     );
 
 Map<String, dynamic> _$BaseDetailModelToJson(BaseDetailModel instance) {
   final val = <String, dynamic>{
-    'length': instance.length,
+    'no_of_sheets': instance.totalSheets,
+    'length_per_sheet': instance.lengthPerSheet,
     'thickness': instance.thickness,
-    'zinc_grade': instance.grade,
     'pick_up_time': instance.pickupDate.toIso8601String(),
+    'production_stage': instance.productionStage,
   };
 
   void writeNotNull(String key, dynamic value) {
@@ -29,6 +31,6 @@ Map<String, dynamic> _$BaseDetailModelToJson(BaseDetailModel instance) {
     }
   }
 
-  writeNotNull('is_production_done', instance.isProductionDone);
+  writeNotNull('notes', instance.notes);
   return val;
 }

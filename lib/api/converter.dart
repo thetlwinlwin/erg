@@ -14,17 +14,27 @@ class ModelConverter<Model> implements Converter {
     this.typeOfContent,
   });
   @override
-  FutureOr<Request> convertRequest(Request request) {
-    final req =
-        applyHeader(request, contentTypeKey, typeOfContent!, override: false);
-    return encodeJson(req);
+  FutureOr<Request> convertRequest(Request request) async {
+    if (request.url == '/refresh') {
+      final req =
+          applyHeader(request, contentTypeKey, jsonApiHeaders, override: false);
+      return encodeJson(req);
+    } else {
+      final req =
+          applyHeader(request, contentTypeKey, typeOfContent!, override: false);
+      return encodeJson(req);
+    }
   }
 
   Request encodeJson(Request request) {
     final contentType = request.headers[contentTypeKey];
-    if (contentType != null && contentType.contains(typeOfContent!)) {
-      return request.copyWith(body: json.encode(request.body));
+    if (contentType != null) {
+      if (contentType.contains(typeOfContent!) ||
+          contentType.contains(jsonApiHeaders)) {
+        return request.copyWith(body: json.encode(request.body));
+      }
     }
+
     return request;
   }
 
@@ -54,8 +64,8 @@ class ModelConverter<Model> implements Converter {
 
   @override
   FutureOr<Response<BodyType>> convertResponse<BodyType, InnerType>(
-      Response response) {
-    return decodeJson<BodyType, InnerType>(response);
+      Response response) async {
+    return decodeJson(response);
   }
 }
 

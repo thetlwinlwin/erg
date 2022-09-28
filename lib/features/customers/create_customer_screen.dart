@@ -1,4 +1,5 @@
 import 'package:chopper/chopper.dart';
+import 'package:erg/managers/listener_manager.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -56,52 +57,62 @@ class _CreateCustomerScreenState extends State<CreateCustomerScreen> {
     super.initState();
   }
 
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _addressController.dispose();
+    _phoneController.dispose();
+    super.dispose();
+  }
+
   void _radioHandler(String? val) => setState(() => _selectedGender = val);
 
   @override
   Widget build(BuildContext context) {
     final Size _size = MediaQuery.of(context).size;
     return Scaffold(
-      body: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          SizedBox(
-            height: _size.height * 0.2,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
-                GenderBuilder(
-                  radioHandler: _radioHandler,
-                  selectedGender: _selectedGender,
-                ),
-              ],
+      body: SafeArea(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            SizedBox(
+              height: _size.height * 0.2,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceAround,
+                children: [
+                  GenderBuilder(
+                    radioHandler: _radioHandler,
+                    selectedGender: _selectedGender,
+                  ),
+                ],
+              ),
             ),
-          ),
-          SizedBox(
-            width: _size.width * 0.7,
-            child: CustomTextField(
-              controller: _nameController,
-              textInputType: TextInputType.name,
-              hintText: 'Name',
-              textInputAction: TextInputAction.next,
+            SizedBox(
+              width: _size.width * 0.7,
+              child: CustomTextField(
+                controller: _nameController,
+                textInputType: TextInputType.name,
+                hintText: 'Name',
+                textInputAction: TextInputAction.next,
+              ),
             ),
-          ),
-          kPaddingBox,
-          SizedBox(
-            width: _size.width * 0.7,
-            child: CustomTextField(
-              controller: _phoneController,
-              textInputType: TextInputType.phone,
-              hintText: 'Phone',
-              textInputAction: TextInputAction.next,
+            kPaddingBox,
+            SizedBox(
+              width: _size.width * 0.7,
+              child: CustomTextField(
+                controller: _phoneController,
+                textInputType: TextInputType.phone,
+                hintText: 'Phone',
+                textInputAction: TextInputAction.next,
+              ),
             ),
-          ),
-          kPaddingBox,
-          SizedBox(
-            width: _size.width * 0.7,
-            child: _addressTextField(context),
-          ),
-        ],
+            kPaddingBox,
+            SizedBox(
+              width: _size.width * 0.7,
+              child: _addressTextField(context),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -145,14 +156,17 @@ class _CreateCustomerScreenState extends State<CreateCustomerScreen> {
       // if not check like this, address text will be '' <= like that.
       address: _addressController.text.isEmpty ? null : _addressController.text,
     );
-    Response<CustomerOut> _customerReturn =
-        await Provider.of<ErgCustomerService>(context, listen: false)
-            .createCustomer(newCustomer: _newCustomer);
+    Response<CustomerOut> _customerReturn = await ErgCustomerService.create(
+            Provider.of<ListenerManager>(context, listen: false))
+        .createCustomer(
+      newCustomer: _newCustomer,
+    );
 
     if (_customerReturn.isSuccessful) {
-      Provider.of<CustomerManager>(context, listen: false)
-          .saveCustomer(newCustomer: _customerReturn.body!);
-      context.goNamed('home');
+      if (await Provider.of<CustomerManager>(context, listen: false)
+          .saveCustomer(newCustomer: _customerReturn.body!)) {
+        context.goNamed('Home');
+      }
     } else {
       errorSnackBar(_customerReturn.error.toString(), context);
     }

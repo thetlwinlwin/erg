@@ -38,6 +38,11 @@ dependencies:
   json_annotation: ^4.4.0
   chopper: ^4.0.5
   logging: ^1.0.2
+  intl: ^0.17.0
+  flutter_datetime_picker: ^1.5.1
+  http: ^0.13.4
+  image_picker: ^0.8.4+11
+  mime: ^1.0.1
 
 
 
@@ -61,8 +66,7 @@ flutter:
   assets:
     - assets/products/
     - assets/logo.png
-    - assets/example.json
-    - assets/gg.json
+    - assets/channel_image.png
  
 
   # fonts:

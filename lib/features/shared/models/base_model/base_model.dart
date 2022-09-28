@@ -1,25 +1,30 @@
-import 'dart:convert';
-import 'package:erg/features/shared/models/auth/auth_model.dart';
 import 'package:json_annotation/json_annotation.dart';
+
 part 'base_model.g.dart';
 
 @JsonSerializable(includeIfNull: false)
 class BaseDetailModel {
-  final double length;
+  @JsonKey(name: 'no_of_sheets')
+  final int totalSheets;
+  @JsonKey(name: 'length_per_sheet')
+  final double lengthPerSheet;
   final double thickness;
-  @JsonKey(name: 'zinc_grade')
-  final double grade;
+  @JsonKey(name: 'total_length')
+  final double totalLength;
   @JsonKey(name: 'pick_up_time')
   final DateTime pickupDate;
-  @JsonKey(name: 'is_production_done')
-  bool? isProductionDone;
+  @JsonKey(name: 'production_stage')
+  String productionStage;
+  String? notes;
+  // totalLength = lengthPerSheet * totalSheets does not work and it did not send anything.
   BaseDetailModel({
-    required this.length,
+    required this.totalSheets,
+    required this.lengthPerSheet,
     required this.thickness,
-    required this.grade,
     required this.pickupDate,
-    this.isProductionDone,
-  });
+    required this.productionStage,
+    this.notes,
+  }) : totalLength = lengthPerSheet * totalSheets;
   factory BaseDetailModel.fromJson(Map<String, dynamic> json) =>
       _$BaseDetailModelFromJson(json);
   Map<String, dynamic> toJson() => _$BaseDetailModelToJson(this);

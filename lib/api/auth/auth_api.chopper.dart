@@ -28,4 +28,13 @@ class _$ErgAuthService extends ErgAuthService {
         Request('POST', $url, client.baseUrl, parts: $parts, multipart: true);
     return client.send<AccessTokenBearer, AccessTokenBearer>($request);
   }
+
+  @override
+  Future<Response<AccessTokenBearer>> refreshToken(
+      {required RefreshToken refreshToken}) {
+    final $url = '/refresh';
+    final $body = refreshToken;
+    final $request = Request('POST', $url, client.baseUrl, body: $body);
+    return client.send<AccessTokenBearer, AccessTokenBearer>($request);
+  }
 }

@@ -1,6 +1,7 @@
 import 'package:erg/managers/app_state_manager.dart';
-import 'package:erg/repository/local_persistence.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:erg/managers/customer_manager.dart';
+import 'package:erg/managers/listener_manager.dart';
+import 'package:provider/provider.dart';
 
 import '../../utils/constants.dart';
 import 'package:flutter/material.dart';
@@ -28,20 +29,20 @@ class _SplashScreenState extends State<SplashScreen>
       vsync: this,
       duration: const Duration(milliseconds: 2500),
     );
-    // getRead();
+    onStartUp();
     _controller.forward();
-
-    appStateManager.initializeApp();
   }
 
-  // void getRead() async {
-  //   final dataString = await rootBundle.loadString('assets/gg.json');
-
-  //   List<DSOrderFetchModel> orderList = (json.decode(dataString) as List)
-  //       .map((i) => DSOrderFetchModel.fromJson(i))
-  //       .toList();
-  //   print(orderList[0].detail.isProductionDone);
-  // }
+  void onStartUp() async {
+    final isLoggedIn =
+        Provider.of<ListenerManager>(context, listen: false).isManagerDataThere;
+    final anyCustomer = Provider.of<CustomerManager>(context, listen: false)
+        .isThereSavedCustomer;
+    await Provider.of<AppStateManager>(context, listen: false).onAppStart(
+      isLoggedIn: isLoggedIn,
+      anyCustomer: anyCustomer,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {

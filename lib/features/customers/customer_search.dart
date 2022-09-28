@@ -1,4 +1,5 @@
 import 'package:chopper/chopper.dart';
+import 'package:erg/managers/listener_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
@@ -24,7 +25,6 @@ class _CustomerSearchState extends State<CustomerSearch> {
   @override
   void initState() {
     super.initState();
-
     _searchController = TextEditingController(text: '');
     _searchController.addListener(() => setState(() {}));
   }
@@ -38,25 +38,27 @@ class _CustomerSearchState extends State<CustomerSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          _searchRow(),
-          // _searchText(),
-          kPaddingBox,
-          const Text(
-            'example : "myint aye" or "0921312412" or "myint aye, 0921312412"',
-            style: TextStyle(
-              color: Colors.grey,
-              fontSize: 12,
-              fontWeight: FontWeight.bold,
+      body: SafeArea(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            _searchRow(),
+            // _searchText(),
+            kPaddingBox,
+            const Text(
+              'example : "myint aye" or "0921312412" or "myint aye, 0921312412"',
+              style: TextStyle(
+                color: Colors.grey,
+                fontSize: 12,
+                fontWeight: FontWeight.bold,
+              ),
             ),
-          ),
-          kPaddingBox,
-          Expanded(
-            child: _futureBuilder(context),
-          ),
-        ],
+            kPaddingBox,
+            Expanded(
+              child: _futureBuilder(context),
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -86,13 +88,11 @@ class _CustomerSearchState extends State<CustomerSearch> {
 
   Future<Response<List<CustomerOut>>> _customerSearch(String value) async {
     final int? isPhone = int.tryParse(value);
+    final _listener = Provider.of<ListenerManager>(context, listen: false);
     Response<List<CustomerOut>> data = isPhone != null
-        ? await Provider.of<ErgCustomerService>(context, listen: false)
-            .searchCustomer(
-            phone: value,
-          )
-        : await Provider.of<ErgCustomerService>(context, listen: false)
-            .searchCustomer(
+        ? await ErgCustomerService.create(_listener)
+            .searchCustomer(phone: value)
+        : await ErgCustomerService.create(_listener).searchCustomer(
             name: value,
             gender: _selectedGender,
           );
@@ -163,13 +163,18 @@ class _CustomerSearchState extends State<CustomerSearch> {
             } catch (e) {
               errorSnackBar(e.toString(), context);
             }
-            context.goNamed('home');
+            context.goNamed('Home');
           },
           child: Container(
             height: 50,
             color: Theme.of(context).colorScheme.secondary.withOpacity(0.7),
             child: Center(
-              child: Text(customerList[index].address.toString()),
+              child: Column(
+                children: [
+                  Text(customerList[index].name.toString()),
+                  Text(customerList[index].phone.toString()),
+                ],
+              ),
             ),
           ),
         );

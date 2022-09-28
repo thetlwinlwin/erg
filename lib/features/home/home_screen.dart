@@ -1,5 +1,6 @@
 import 'package:erg/managers/app_state_manager.dart';
 import 'package:erg/managers/customer_manager.dart';
+import 'package:erg/managers/listener_manager.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import '../../utils/constants.dart';
@@ -23,6 +24,8 @@ class HomeScreen extends StatelessWidget {
             IconButton(
                 icon: const Icon(Icons.logout_sharp),
                 onPressed: () {
+                  Provider.of<ListenerManager>(context, listen: false)
+                      .removeToken();
                   Provider.of<AppStateManager>(context, listen: false).logout();
                   Provider.of<CustomerManager>(context, listen: false)
                       .deleteCustomer();
@@ -49,7 +52,9 @@ class HomeScreen extends StatelessWidget {
             children: availableItems
                 .map(
                   (String product) => CustomTile(
-                    callbackFunction: () => context.goNamed('customers_search'),
+                    callbackFunction: () {
+                      context.goNamed(product);
+                    },
                     imageLocation: getProductPath(product: product),
                     imageText: product,
                   ),

@@ -9,13 +9,24 @@ part of 'auth_model.dart';
 AccessTokenBearer _$AccessTokenBearerFromJson(Map<String, dynamic> json) =>
     AccessTokenBearer(
       accessTokenString: json['access_token'] as String,
-      tokenType: json['token_type'] as String? ?? 'bearer',
+      refreshTokenString: json['refresh_token'] as String,
+      tokenType: json['token_type'] as String? ?? 'Bearer',
     );
 
 Map<String, dynamic> _$AccessTokenBearerToJson(AccessTokenBearer instance) =>
     <String, dynamic>{
       'access_token': instance.accessTokenString,
+      'refresh_token': instance.refreshTokenString,
       'token_type': instance.tokenType,
+    };
+
+RefreshToken _$RefreshTokenFromJson(Map<String, dynamic> json) => RefreshToken(
+      acceptedTokenString: json['accepted_token'] as String,
+    );
+
+Map<String, dynamic> _$RefreshTokenToJson(RefreshToken instance) =>
+    <String, dynamic>{
+      'accepted_token': instance.acceptedTokenString,
     };
 
 ManagerBase _$ManagerBaseFromJson(Map<String, dynamic> json) => ManagerBase(

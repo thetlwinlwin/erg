@@ -12,6 +12,7 @@ part 'ds_model.g.dart';
 class DSDataCreateModel {
   @JsonKey(name: 'customer_id')
   final int customerId;
+  @JsonKey(name: 'ds_order_detail')
   final DSDetailModel detail;
   DSDataCreateModel({
     required this.customerId,
@@ -24,22 +25,27 @@ class DSDataCreateModel {
 
 @JsonSerializable(includeIfNull: false)
 class DSDetailModel extends BaseDetailModel {
-  @JsonKey(name: 'no_of_sheets')
-  final int totalSheets;
   final double depth;
+  @JsonKey(name: 'zinc_grade')
+  final double grade;
 
   DSDetailModel({
-    required double length,
-    required double thickness,
-    required double grade,
-    required DateTime pickupDate,
-    required this.totalSheets,
     required this.depth,
+    required this.grade,
+    required double lengthPerSheet,
+    required double thickness,
+    required DateTime pickupDate,
+    required int totalSheets,
+    required String productionStage,
+    String? notes,
   }) : super(
-            length: length,
+            productionStage: productionStage,
+            notes: notes,
+            totalSheets: totalSheets,
+            lengthPerSheet: lengthPerSheet,
             thickness: thickness,
-            grade: grade,
             pickupDate: pickupDate);
+
   factory DSDetailModel.fromJson(Map<String, dynamic> json) =>
       _$DSDetailModelFromJson(json);
   @override
@@ -49,9 +55,11 @@ class DSDetailModel extends BaseDetailModel {
 // for ds/orders/all
 @JsonSerializable(includeIfNull: false)
 class DSOrderFetchModel {
+  @JsonKey(name: 'ds_manager')
   final ManagerBase manager;
-  final CustomerBase customer;
-  @JsonKey(name: 'order_detail')
+  @JsonKey(name: 'ds_customer')
+  final CustomerCreate customer;
+  @JsonKey(name: 'ds_order_detail')
   final DSDetailModel detail;
 
   DSOrderFetchModel({

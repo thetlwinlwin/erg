@@ -13,6 +13,11 @@ abstract class ErgAuthService extends ChopperService {
     @Part() String password,
   );
 
+  @Post(path: '/refresh')
+  Future<Response<AccessTokenBearer>> refreshToken({
+    @Body() required RefreshToken refreshToken,
+  });
+
   static ErgAuthService create() {
     final client = ChopperClient(
       baseUrl: RouterPath.authApiUrl,
